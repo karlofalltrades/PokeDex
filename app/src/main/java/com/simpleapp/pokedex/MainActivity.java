@@ -1,5 +1,6 @@
 package com.simpleapp.pokedex;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.simpleapp.pokedex.adapter.PokemonListAdapter;
 import com.simpleapp.pokedex.model.PokemonData;
 import com.simpleapp.pokedex.model.PokemonListItems;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity{
         recyclerView.setLayoutManager(new GridLayoutManager(this,2));
         recyclerView.setAdapter(pokemonListAdapter);
 
+        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "", "Gathering Pokemons...");
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://pokeapi.co/api/v2/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -66,12 +70,12 @@ public class MainActivity extends AppCompatActivity{
                     if (pokemonResponse != null && pokemonResponse.getResults() != null) {
                         for (PokemonData pokemonData : pokemonResponse.getResults()) {
                             String id = extractIdFromUrl(pokemonData.getUrl());
-                            Log.d("ERROR", id);
                             String name = pokemonData.getName().toUpperCase();
                             String imageUrlFromId = getImageUrlFromId(id);
                             pokemonListItemsList.add(new PokemonListItems(Integer.parseInt(id), name, imageUrlFromId));
                         }
-                        pokemonListAdapter.notifyDataSetChanged(); // Notify adapter about the data change
+                        pokemonListAdapter.notifyDataSetChanged();
+                        progressDialog.dismiss();
                     }
                 } else {
                     // Handle unsuccessful response
@@ -104,6 +108,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private String getImageUrlFromId(String id) {
-        return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"+ id +".png";
+        return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/"+ id +".png";
     }
 }

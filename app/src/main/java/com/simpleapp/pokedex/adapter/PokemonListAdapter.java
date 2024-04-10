@@ -75,7 +75,7 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
 
         public void bind(PokemonListItems pokemon) {
             Picasso.get().load(pokemon.getImageUrl()).into(imageView);
-            idTextView.setText(String.valueOf(pokemon.getId()));
+            idTextView.setText(String.format("#%03d", pokemon.getId()));
             nameTextView.setText(pokemon.getName());
         }
     }
