@@ -4,12 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.simpleapp.pokedex.R;
 import com.simpleapp.pokedex.model.PokemonListItems;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
@@ -51,12 +53,14 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
 
     public static class PokemonViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
+        private ProgressBar progressBar;
         private TextView idTextView;
         private TextView nameTextView;
 
         public PokemonViewHolder(@NonNull View itemView, OnItemClickListener onItemClickListener) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
+            progressBar = itemView.findViewById(R.id.homeprogress);
             idTextView = itemView.findViewById(R.id.idTextView);
             nameTextView = itemView.findViewById(R.id.nameTextView);
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +78,20 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
         }
 
         public void bind(PokemonListItems pokemon) {
-            Picasso.get().load(pokemon.getImageUrl()).into(imageView);
+            imageView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            Picasso.get().load(pokemon.getImageUrl()).into(imageView, new Callback() {
+                @Override
+                public void onSuccess() {
+                    imageView.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    imageView.setVisibility(View.GONE);
+                }
+            });
             idTextView.setText(String.format("#%03d", pokemon.getId()));
             nameTextView.setText(pokemon.getName());
         }

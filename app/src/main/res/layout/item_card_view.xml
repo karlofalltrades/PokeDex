@@ -19,6 +19,13 @@
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_launcher_round" />
 
+        <ProgressBar
+            android:id="@+id/homeprogress"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:layout_height="200dp" />
+
         <TextView
             android:id="@+id/idTextView"
             android:layout_width="match_parent"
