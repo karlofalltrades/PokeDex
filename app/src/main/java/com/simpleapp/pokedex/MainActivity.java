@@ -3,7 +3,6 @@ package com.simpleapp.pokedex;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -14,12 +13,12 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.simpleapp.pokedex.adapter.PokemonListAdapter;
 import com.simpleapp.pokedex.model.PokemonData;
 import com.simpleapp.pokedex.model.PokemonListItems;
 import com.simpleapp.pokedex.model.PokemonResponse;
 import com.simpleapp.pokedex.service.PokeApiService;
+import com.simpleapp.pokedex.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,7 @@ public class MainActivity extends AppCompatActivity{
     private RecyclerView recyclerView;
     private PokemonListAdapter pokemonListAdapter;
     private List<PokemonListItems> pokemonListItemsList;
+    private int offset = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,22 +46,40 @@ public class MainActivity extends AppCompatActivity{
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        initViewItems();
+
+        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "", "Gathering Pokemons...");
+
+        loadData(offset, progressDialog);
+        pokemonListAdapter.setOnItemClickListener(new PokemonListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(MainActivity.this, PokemonDetailActivity.class);
+                intent.putExtra("url", Constants.BASE_URL + "pokemon/" + pokemonListItemsList.get(position).getId() + "/");
+                startActivity(intent);
+//                Toast.makeText(MainActivity.this, "Clicked: " + pokemonListItemsList.get(position).getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void initViewItems(){
         recyclerView = findViewById(R.id.recyclerview);
         pokemonListItemsList = new ArrayList<>();
         pokemonListAdapter = new PokemonListAdapter(pokemonListItemsList);
         recyclerView.setLayoutManager(new GridLayoutManager(this,2));
         recyclerView.setAdapter(pokemonListAdapter);
+    }
 
-        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "", "Gathering Pokemons...");
+    private void loadData(int offset, ProgressDialog progressDialog){
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://pokeapi.co/api/v2/")
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         PokeApiService pokeApiService = retrofit.create(PokeApiService.class);
-
-        Call<PokemonResponse> call = pokeApiService.getPokemonList();
+        Call<PokemonResponse> call = pokeApiService.getPokemonList(offset, Constants.LIMIT);
         call.enqueue(new Callback<PokemonResponse>() {
             @Override
             public void onResponse(Call<PokemonResponse> call, Response<PokemonResponse> response) {
@@ -75,25 +93,18 @@ public class MainActivity extends AppCompatActivity{
                             pokemonListItemsList.add(new PokemonListItems(Integer.parseInt(id), name, imageUrlFromId));
                         }
                         pokemonListAdapter.notifyDataSetChanged();
-                        progressDialog.dismiss();
+                        if (progressDialog.isShowing()) progressDialog.dismiss();
                     }
                 } else {
-                    // Handle unsuccessful response
+                    if (progressDialog.isShowing()) progressDialog.dismiss();
+                    Toast.makeText(MainActivity.this, "There was a problem gathering the pokemons, check your connection.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<PokemonResponse> call, Throwable t) {
-
-            }
-        });
-        pokemonListAdapter.setOnItemClickListener(new PokemonListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent = new Intent(MainActivity.this, PokemonDetailActivity.class);
-                intent.putExtra("url", "https://pokeapi.co/api/v2/pokemon/"+ pokemonListItemsList.get(position).getId() +"/");
-                startActivity(intent);
-//                Toast.makeText(MainActivity.this, "Clicked: " + pokemonListItemsList.get(position).getName(), Toast.LENGTH_SHORT).show();
+                if (progressDialog.isShowing()) progressDialog.dismiss();
+                Toast.makeText(MainActivity.this, "There was a problem gathering the pokemons. Try checking your connection!", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -103,11 +114,10 @@ public class MainActivity extends AppCompatActivity{
 
         String[] parts = url.split("/");
 
-        String lastPart = parts[parts.length - 1];
-        return lastPart;
+        return parts[parts.length - 1];
     }
 
     private String getImageUrlFromId(String id) {
-        return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/"+ id +".png";
+        return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"+ id +".png";
     }
 }
