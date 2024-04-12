@@ -13,6 +13,6 @@ public interface PokeApiService {
                                          @Query("limit") int limit);
 
     @GET("pokemon/{id}")
-    Call<PokemonResponse> getPokemonDetail(@Path("id") int id);
+    Call<PokemonResponse> getPokemonDetailById(@Path("id") int id);
 }
 

@@ -6,5 +6,7 @@ public final class Constants {
 
     public static final int LIMIT = 100;
 
+    public static final int SPLASH_DELAY = 2000;
+
     private Constants() {}
 }

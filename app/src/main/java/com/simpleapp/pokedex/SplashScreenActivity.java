@@ -10,9 +10,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.simpleapp.pokedex.utils.Constants;
+
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DELAY = 2000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +28,8 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run() {
                 Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
                 startActivity(intent);
-                finish(); // Close splash screen activity
+                finish();
             }
-        }, SPLASH_DELAY);
+        }, Constants.SPLASH_DELAY);
     }
 }

@@ -3,9 +3,12 @@ package com.simpleapp.pokedex;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -30,11 +33,13 @@ import retrofit2.Response;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private PokemonListAdapter pokemonListAdapter;
     private List<PokemonListItems> pokemonListItemsList;
     private int offset = 0;
+    private boolean isLoading = false;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,20 +63,38 @@ public class MainActivity extends AppCompatActivity{
                 Intent intent = new Intent(MainActivity.this, PokemonDetailActivity.class);
                 intent.putExtra("url", Constants.BASE_URL + "pokemon/" + pokemonListItemsList.get(position).getId() + "/");
                 startActivity(intent);
-//                Toast.makeText(MainActivity.this, "Clicked: " + pokemonListItemsList.get(position).getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    offset += Constants.LIMIT;
+                    loadData(offset, null);
+                }
             }
         });
     }
 
-    private void initViewItems(){
+    private void initViewItems() {
         recyclerView = findViewById(R.id.recyclerview);
+        progressBar = findViewById(R.id.progress_bar);
         pokemonListItemsList = new ArrayList<>();
         pokemonListAdapter = new PokemonListAdapter(pokemonListItemsList);
-        recyclerView.setLayoutManager(new GridLayoutManager(this,2));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setAdapter(pokemonListAdapter);
     }
 
-    private void loadData(int offset, ProgressDialog progressDialog){
+    private void loadData(int offset, ProgressDialog progressDialog) {
+        isLoading = true;
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
@@ -83,6 +106,8 @@ public class MainActivity extends AppCompatActivity{
         call.enqueue(new Callback<PokemonResponse>() {
             @Override
             public void onResponse(Call<PokemonResponse> call, Response<PokemonResponse> response) {
+                if (progressBar.getVisibility() == View.VISIBLE) progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     PokemonResponse pokemonResponse = response.body();
                     if (pokemonResponse != null && pokemonResponse.getResults() != null) {
@@ -93,18 +118,21 @@ public class MainActivity extends AppCompatActivity{
                             pokemonListItemsList.add(new PokemonListItems(Integer.parseInt(id), name, imageUrlFromId));
                         }
                         pokemonListAdapter.notifyDataSetChanged();
-                        if (progressDialog.isShowing()) progressDialog.dismiss();
                     }
                 } else {
-                    if (progressDialog.isShowing()) progressDialog.dismiss();
+                    if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
                     Toast.makeText(MainActivity.this, "There was a problem gathering the pokemons, check your connection.", Toast.LENGTH_LONG).show();
                 }
+                isLoading = false;
+                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<PokemonResponse> call, Throwable t) {
-                if (progressDialog.isShowing()) progressDialog.dismiss();
                 Toast.makeText(MainActivity.this, "There was a problem gathering the pokemons. Try checking your connection!", Toast.LENGTH_LONG).show();
+                isLoading = false;
+                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+                if (progressBar.getVisibility() == View.VISIBLE) progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -118,6 +146,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private String getImageUrlFromId(String id) {
-        return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"+ id +".png";
+        return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + id + ".png";
     }
 }
