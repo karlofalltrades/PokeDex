@@ -13,6 +13,7 @@ import com.simpleapp.pokedex.R;
 import com.simpleapp.pokedex.model.PokemonListItems;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.PokemonViewHolder> {
@@ -31,6 +32,11 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
 
     public PokemonListAdapter(List<PokemonListItems> pokemonList) {
         this.pokemonList = pokemonList;
+    }
+
+    public void filterList(List<PokemonListItems> filteredList) {
+        pokemonList = filteredList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -63,15 +69,12 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
             progressBar = itemView.findViewById(R.id.homeprogress);
             idTextView = itemView.findViewById(R.id.idTextView);
             nameTextView = itemView.findViewById(R.id.nameTextView);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (onItemClickListener != null){
-                        int pos = getAdapterPosition();
+            itemView.setOnClickListener(v -> {
+                if (onItemClickListener != null){
+                    int pos = getAdapterPosition();
 
-                        if (pos != RecyclerView.NO_POSITION){
-                            onItemClickListener.onItemClick(pos);
-                        }
+                    if (pos != RecyclerView.NO_POSITION){
+                        onItemClickListener.onItemClick(pos);
                     }
                 }
             });

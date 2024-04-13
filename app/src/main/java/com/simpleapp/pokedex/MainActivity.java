@@ -3,7 +3,10 @@ package com.simpleapp.pokedex;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -15,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.simpleapp.pokedex.adapter.PokemonListAdapter;
 import com.simpleapp.pokedex.model.PokemonData;
@@ -35,11 +39,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private PokemonListAdapter pokemonListAdapter;
     private List<PokemonListItems> pokemonListItemsList;
+    private List<PokemonListItems> filteredList;
     private int offset = 0;
     private boolean isLoading = false;
     private ProgressBar progressBar;
+    private EditText searchText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,19 +58,17 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         initViewItems();
+        setupSearchField();
+        setupSwipeToRefresh();
 
         ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "", "Gathering Pokemons...");
-
         loadData(offset, progressDialog);
-        pokemonListAdapter.setOnItemClickListener(new PokemonListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent = new Intent(MainActivity.this, PokemonDetailActivity.class);
-                intent.putExtra("url", Constants.BASE_URL + "pokemon/" + pokemonListItemsList.get(position).getId() + "/");
-                startActivity(intent);
-            }
+
+        pokemonListAdapter.setOnItemClickListener(position -> {
+            Intent intent = new Intent(MainActivity.this, PokemonDetailActivity.class);
+            intent.putExtra("url", Constants.BASE_URL + "pokemon/" + pokemonListItemsList.get(position).getId() + "/");
+            startActivity(intent);
         });
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -87,10 +92,47 @@ public class MainActivity extends AppCompatActivity {
     private void initViewItems() {
         recyclerView = findViewById(R.id.recyclerview);
         progressBar = findViewById(R.id.progress_bar);
+        searchText = findViewById(R.id.input_text);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         pokemonListItemsList = new ArrayList<>();
         pokemonListAdapter = new PokemonListAdapter(pokemonListItemsList);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setAdapter(pokemonListAdapter);
+    }
+
+    private void setupSearchField() {
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String userInput = s.toString().toLowerCase().trim();
+                searchPokemon(userInput);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void searchPokemon(String query) {
+        filteredList = new ArrayList<>();
+        for (PokemonListItems item : pokemonListItemsList) {
+            if (item.getName().toLowerCase().contains(query)) {
+                filteredList.add(item);
+            }
+        }
+        pokemonListAdapter.filterList(filteredList);
+    }
+
+    private void setupSwipeToRefresh() {
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            swipeRefreshLayout.setRefreshing(true);
+            offset = 0;
+            pokemonListItemsList.clear();
+            loadData(offset, null);
+        });
     }
 
     private void loadData(int offset, ProgressDialog progressDialog) {
@@ -107,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PokemonResponse> call, Response<PokemonResponse> response) {
                 if (progressBar.getVisibility() == View.VISIBLE) progressBar.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
+                if (swipeRefreshLayout.isRefreshing()) swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful()) {
                     PokemonResponse pokemonResponse = response.body();
                     if (pokemonResponse != null && pokemonResponse.getResults() != null) {
@@ -129,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PokemonResponse> call, Throwable t) {
+                if (swipeRefreshLayout.isRefreshing()) swipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(MainActivity.this, "There was a problem gathering the pokemons. Try checking your connection!", Toast.LENGTH_LONG).show();
                 isLoading = false;
                 if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
