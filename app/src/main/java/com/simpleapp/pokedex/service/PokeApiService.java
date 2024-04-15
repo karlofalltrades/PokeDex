@@ -1,6 +1,7 @@
 package com.simpleapp.pokedex.service;
 
 import com.simpleapp.pokedex.model.PokemonResponse;
+import com.simpleapp.pokedex.model.pokemon.Pokemon;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -12,7 +13,7 @@ public interface PokeApiService {
     Call<PokemonResponse> getPokemonList(@Query("offset") int offset,
                                          @Query("limit") int limit);
 
-    @GET("pokemon/{id}")
-    Call<PokemonResponse> getPokemonDetailById(@Path("id") int id);
+    @GET("pokemon/{name}")
+    Call<Pokemon> getPokemonDetailByName(@Path("name") String name);
 }
 

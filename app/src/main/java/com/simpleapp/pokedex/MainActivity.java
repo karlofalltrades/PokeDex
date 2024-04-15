@@ -67,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
         pokemonListAdapter.setOnItemClickListener(position -> {
             Intent intent = new Intent(MainActivity.this, PokemonDetailActivity.class);
-            intent.putExtra("url", Constants.BASE_URL + "pokemon/" + pokemonListItemsList.get(position).getId() + "/");
+            intent.putExtra("name", pokemonListItemsList.get(position).getName().toLowerCase());
+            Toast.makeText(MainActivity.this, Constants.BASE_URL + "pokemon/" + pokemonListItemsList.get(position).getId() + "/", Toast.LENGTH_LONG).show();
             startActivity(intent);
         });
 
@@ -156,14 +157,14 @@ public class MainActivity extends AppCompatActivity {
                         for (PokemonData pokemonData : pokemonResponse.getResults()) {
                             String id = extractIdFromUrl(pokemonData.getUrl());
                             String name = pokemonData.getName().toUpperCase();
-                            String imageUrlFromId = getImageUrlFromId(id);
+                            String imageUrlFromId = generateImageUrlFromId(id);
                             pokemonListItemsList.add(new PokemonListItems(Integer.parseInt(id), name, imageUrlFromId));
                         }
                         pokemonListAdapter.notifyDataSetChanged();
                     }
                 } else {
                     if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-                    Toast.makeText(MainActivity.this, "There was a problem gathering the pokemons, check your connection.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "There was a problem gathering the pokemons, check your connection!", Toast.LENGTH_LONG).show();
                 }
                 isLoading = false;
                 if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
@@ -188,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         return parts[parts.length - 1];
     }
 
-    private String getImageUrlFromId(String id) {
+    private String generateImageUrlFromId(String id) {
         return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + id + ".png";
     }
 }

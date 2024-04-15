@@ -5,6 +5,7 @@
     android:id="@+id/pokemondetailview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PokemonDetailActivity">
+    tools:context=".PokemonDetailActivity"
+    android:background="@drawable/background_2">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
