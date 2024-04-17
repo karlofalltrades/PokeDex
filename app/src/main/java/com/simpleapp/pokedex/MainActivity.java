@@ -65,29 +65,8 @@ public class MainActivity extends AppCompatActivity {
         ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "", "Gathering Pokemons...");
         loadData(offset, progressDialog);
 
-        pokemonListAdapter.setOnItemClickListener(position -> {
-            Intent intent = new Intent(MainActivity.this, PokemonDetailActivity.class);
-            intent.putExtra("name", pokemonListItemsList.get(position).getName().toLowerCase());
-            Toast.makeText(MainActivity.this, Constants.BASE_URL + "pokemon/" + pokemonListItemsList.get(position).getId() + "/", Toast.LENGTH_LONG).show();
-            startActivity(intent);
-        });
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-                int visibleItemCount = layoutManager.getChildCount();
-                int totalItemCount = layoutManager.getItemCount();
-                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-
-                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    offset += Constants.LIMIT;
-                    loadData(offset, null);
-                }
-            }
-        });
+        setupAdapterItemOnClickListener();
+        setRecyclerViewOnScrollListener();
     }
 
     private void initViewItems() {
@@ -177,6 +156,34 @@ public class MainActivity extends AppCompatActivity {
                 isLoading = false;
                 if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
                 if (progressBar.getVisibility() == View.VISIBLE) progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void setupAdapterItemOnClickListener() {
+        pokemonListAdapter.setOnItemClickListener(position -> {
+            Intent intent = new Intent(MainActivity.this, PokemonDetailActivity.class);
+            intent.putExtra("name", pokemonListItemsList.get(position).getName().toLowerCase());
+            Toast.makeText(MainActivity.this, Constants.BASE_URL + "pokemon/" + pokemonListItemsList.get(position).getId() + "/", Toast.LENGTH_LONG).show();
+            startActivity(intent);
+        });
+    }
+
+    private void setRecyclerViewOnScrollListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    offset += Constants.LIMIT;
+                    loadData(offset, null);
+                }
             }
         });
     }

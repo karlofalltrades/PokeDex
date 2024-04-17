@@ -48,7 +48,7 @@ tools:context=".PokemonDetailActivity">
 <!--        android:layout_gravity="center"-->
 <!--        android:layout_marginTop="80dp"-->
 <!--        android:fontFamily="monospace"-->
-<!--        android:text="@string/pokemon_s_name"-->
+<!--        android:text="#000 Pokemon Name"-->
 <!--        android:textAppearance="?android:textAppearanceLarge"-->
 <!--        android:textColor="#616161"-->
 <!--        android:textSize="34sp" />-->
@@ -132,12 +132,13 @@ tools:context=".PokemonDetailActivity">
 <!--        android:id="@+id/PerfomanceTextView"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="center"-->
+<!--        android:layout_gravity="start"-->
 <!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginLeft="10dp"-->
 <!--        android:fontFamily="sans-serif-black"-->
-<!--        android:text="PERFOMANCE"-->
+<!--        android:text="STATS:"-->
 <!--        android:textColor="#8c8c8c"-->
-<!--        android:textSize="23dp" />-->
+<!--        android:textSize="20dp" />-->
 
 <!--    <LinearLayout-->
 <!--        android:layout_width="match_parent"-->
@@ -158,9 +159,9 @@ tools:context=".PokemonDetailActivity">
 <!--            android:id="@+id/determinateBar1"-->
 <!--            style="@style/MyProgressBar"-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
 <!--            android:layout_gravity="center_vertical"-->
-<!--            android:max="300"-->
+<!--            android:max="100"-->
 <!--            android:progress="100" />-->
 
 <!--    </LinearLayout>-->
@@ -184,9 +185,9 @@ tools:context=".PokemonDetailActivity">
 <!--            android:id="@+id/determinateBar2"-->
 <!--            style="@style/MyProgressBar2"-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
 <!--            android:layout_gravity="center_vertical"-->
-<!--            android:max="300"-->
+<!--            android:max="100"-->
 <!--            android:progress="100" />-->
 
 <!--    </LinearLayout>-->
@@ -210,9 +211,9 @@ tools:context=".PokemonDetailActivity">
 <!--            android:id="@+id/determinateBar3"-->
 <!--            style="@style/MyProgressBar3"-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
 <!--            android:layout_gravity="center_vertical"-->
-<!--            android:max="300"-->
+<!--            android:max="100"-->
 <!--            android:progress="100" />-->
 
 <!--    </LinearLayout>-->
@@ -236,9 +237,9 @@ tools:context=".PokemonDetailActivity">
 <!--            android:id="@+id/determinateBar4"-->
 <!--            style="@style/MyProgressBar6"-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
 <!--            android:layout_gravity="center_vertical"-->
-<!--            android:max="300"-->
+<!--            android:max="100"-->
 <!--            android:progress="100" />-->
 
 <!--    </LinearLayout>-->
@@ -262,9 +263,9 @@ tools:context=".PokemonDetailActivity">
 <!--            android:id="@+id/determinateBar5"-->
 <!--            style="@style/MyProgressBar4"-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
 <!--            android:layout_gravity="center_vertical"-->
-<!--            android:max="300"-->
+<!--            android:max="100"-->
 <!--            android:progress="100" />-->
 
 <!--    </LinearLayout>-->
@@ -289,9 +290,9 @@ tools:context=".PokemonDetailActivity">
 <!--            android:id="@+id/determinateBar6"-->
 <!--            style="@style/MyProgressBar5"-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
 <!--            android:layout_gravity="center_vertical"-->
-<!--            android:max="300"-->
+<!--            android:max="100"-->
 <!--            android:progress="100" />-->
 
 <!--    </LinearLayout>-->
