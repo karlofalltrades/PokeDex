@@ -26,7 +26,7 @@ public class Pokemon {
    int height;
 
    @SerializedName("held_items")
-   List<String> heldItems;
+   List<HeldItems> heldItems;
 
    @SerializedName("id")
    int id;
@@ -50,7 +50,7 @@ public class Pokemon {
    List<String> pastAbilities;
 
    @SerializedName("past_types")
-   List<String> pastTypes;
+   List<PastTypes> pastTypes;
 
    @SerializedName("species")
    Species species;
@@ -109,11 +109,10 @@ public class Pokemon {
     public int getHeight() {
         return height;
     }
-    
-    public void setHeldItems(List<String> heldItems) {
+    public void setHeldItems(List<HeldItems> heldItems) {
         this.heldItems = heldItems;
     }
-    public List<String> getHeldItems() {
+    public List<HeldItems> getHeldItems() {
         return heldItems;
     }
     
@@ -165,11 +164,11 @@ public class Pokemon {
     public List<String> getPastAbilities() {
         return pastAbilities;
     }
-    
-    public void setPastTypes(List<String> pastTypes) {
+
+    public void setPastTypes(List<PastTypes> pastTypes) {
         this.pastTypes = pastTypes;
     }
-    public List<String> getPastTypes() {
+    public List<PastTypes> getPastTypes() {
         return pastTypes;
     }
     
