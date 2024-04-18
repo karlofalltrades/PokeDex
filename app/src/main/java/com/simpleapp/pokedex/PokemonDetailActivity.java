@@ -34,7 +34,7 @@ public class PokemonDetailActivity extends AppCompatActivity {
 
     private Pokemon pokemon;
     private ImageView pokemonImage;
-    private TextView pokemonName;
+    private TextView pokemonName, hpStat;
     private ProgressBar hpBar, attackBar, defenseBar, specialDefenseBar, specialAttackBar, speedBar, loadingImageView;
     private ChipGroup typeChipGroup;
     private ChipGroup abilitesChipGroup;
@@ -55,6 +55,7 @@ public class PokemonDetailActivity extends AppCompatActivity {
     private void initViewItems() {
         pokemonImage = findViewById(R.id.imageView);
         pokemonName = findViewById(R.id.nameTextView);
+        hpStat = findViewById(R.id.hpStatNumber);
         typeChipGroup = findViewById(R.id.typeChipGroup);
         abilitesChipGroup = findViewById(R.id.abilitiesChipGroup);
         hpBar  = findViewById(R.id.hpBar);
@@ -146,6 +147,7 @@ public class PokemonDetailActivity extends AppCompatActivity {
         for (Stats stat : pokemon.getStats()){
             if (stat.getStat().getName().equalsIgnoreCase("hp")) {
                 hpBar.setProgress(stat.getBaseStat(), true);
+                hpStat.setText(String.valueOf(stat.getBaseStat()));
             } else if (stat.getStat().getName().equalsIgnoreCase("attack")) {
                 attackBar.setProgress(stat.getBaseStat(), true);
             } else if (stat.getStat().getName().equalsIgnoreCase("defense")) {
