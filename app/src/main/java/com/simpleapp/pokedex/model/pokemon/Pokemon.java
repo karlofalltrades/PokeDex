@@ -47,7 +47,7 @@ public class Pokemon {
    int order;
 
    @SerializedName("past_abilities")
-   List<String> pastAbilities;
+   List<PastAbilities> pastAbilities;
 
    @SerializedName("past_types")
    List<PastTypes> pastTypes;
@@ -157,11 +157,11 @@ public class Pokemon {
     public int getOrder() {
         return order;
     }
-    
-    public void setPastAbilities(List<String> pastAbilities) {
+
+    public void setPastAbilities(List<PastAbilities> pastAbilities) {
         this.pastAbilities = pastAbilities;
     }
-    public List<String> getPastAbilities() {
+    public List<PastAbilities> getPastAbilities() {
         return pastAbilities;
     }
 

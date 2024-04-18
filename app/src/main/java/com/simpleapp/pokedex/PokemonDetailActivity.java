@@ -34,7 +34,7 @@ public class PokemonDetailActivity extends AppCompatActivity {
 
     private Pokemon pokemon;
     private ImageView pokemonImage;
-    private TextView pokemonName, hpStat;
+    private TextView pokemonName, hpStat, attackStat, defenseStat, specialAttackStat, specialDefenseStat, speedStat;
     private ProgressBar hpBar, attackBar, defenseBar, specialDefenseBar, specialAttackBar, speedBar, loadingImageView;
     private ChipGroup typeChipGroup;
     private ChipGroup abilitesChipGroup;
@@ -56,6 +56,11 @@ public class PokemonDetailActivity extends AppCompatActivity {
         pokemonImage = findViewById(R.id.imageView);
         pokemonName = findViewById(R.id.nameTextView);
         hpStat = findViewById(R.id.hpStatNumber);
+        attackStat = findViewById(R.id.attackStatNumber);
+        defenseStat = findViewById(R.id.defenseStatNumber);
+        specialAttackStat = findViewById(R.id.specialAttackStatNumber);
+        specialDefenseStat = findViewById(R.id.specialDefenseStatNumber);
+        speedStat = findViewById(R.id.speedStatNumber);
         typeChipGroup = findViewById(R.id.typeChipGroup);
         abilitesChipGroup = findViewById(R.id.abilitiesChipGroup);
         hpBar  = findViewById(R.id.hpBar);
@@ -150,14 +155,19 @@ public class PokemonDetailActivity extends AppCompatActivity {
                 hpStat.setText(String.valueOf(stat.getBaseStat()));
             } else if (stat.getStat().getName().equalsIgnoreCase("attack")) {
                 attackBar.setProgress(stat.getBaseStat(), true);
+                attackStat.setText(String.valueOf(stat.getBaseStat()));
             } else if (stat.getStat().getName().equalsIgnoreCase("defense")) {
                 defenseBar.setProgress(stat.getBaseStat(), true);
+                defenseStat.setText(String.valueOf(stat.getBaseStat()));
             } else if (stat.getStat().getName().equalsIgnoreCase("special-attack")) {
                 specialAttackBar.setProgress(stat.getBaseStat(), true);
+                specialAttackStat.setText(String.valueOf(stat.getBaseStat()));
             } else if (stat.getStat().getName().equalsIgnoreCase("special-defense")) {
                 specialDefenseBar.setProgress(stat.getBaseStat(), true);
+                specialDefenseStat.setText(String.valueOf(stat.getBaseStat()));
             } else if (stat.getStat().getName().equalsIgnoreCase("speed")) {
                 speedBar.setProgress(stat.getBaseStat(), true);
+                speedStat.setText(String.valueOf(stat.getBaseStat()));
             }
         }
 
